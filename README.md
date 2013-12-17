@@ -1,0 +1,1 @@
+Extensions to the Sublime Text 3 editor for use with the Coq programming language.
