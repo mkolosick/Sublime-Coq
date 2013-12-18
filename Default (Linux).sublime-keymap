@@ -1,0 +1,74 @@
+[
+    {
+        "keys": ["ctrl+down"],
+        "command": "print_down",
+        "context":  [
+            {
+                "key": "selector", "operator": "equal", "operand": "source.coq"
+            },
+            {
+                "key": "running_coqtop", "operator": "equal", "operand": "source.coq"
+            }
+                    ]
+    },
+    {
+        "keys": ["ctrl+up"],
+        "command": "print_up",
+        "context":  [
+            {
+                "key": "selector", "operator": "equal", "operand": "source.coq"
+            },
+            {
+                "key": "running_coqtop", "operator": "equal", "operand": "source.coq"
+            }
+                    ]
+    },
+    {
+        "keys": ["ctrl+right"],
+        "command": "print_go_to",
+        "context":  [
+            {
+                "key": "selector", "operator": "equal", "operand": "source.coq"
+            },
+            {
+                "key": "running_coqtop", "operator": "equal", "operand": "source.coq"
+            }
+                    ]
+    },
+    {
+        "keys": ["ctrl+end"],
+        "command": "print_end",
+        "context":  [
+            {
+                "key": "selector", "operator": "equal", "operand": "source.coq"
+            },
+            {
+                "key": "running_coqtop", "operator": "equal", "operand": "source.coq"
+            }
+                    ]
+    },
+    {
+        "keys": ["ctrl+home"],
+        "command": "print_home",
+        "context":  [
+            {
+                "key": "selector", "operator": "equal", "operand": "source.coq"
+            },
+            {
+                "key": "running_coqtop", "operator": "equal", "operand": "source.coq"
+            }
+                    ]
+    },
+    {
+        "keys": ["ctrl+escape"],
+        "command": "stop_coq",
+        "context":  [
+            {
+                "key": "selector", "operator": "equal", "operand": "source.coq"
+            },
+            {
+                "key": "running_coqtop", "operator": "equal", "operand": "source.coq"
+            }
+                    ]
+}
+]

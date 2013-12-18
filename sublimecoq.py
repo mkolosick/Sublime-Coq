@@ -1,4 +1,5 @@
 import re
+import sublime, sublime_plugin
 from coqtop import Coqtop
 
 '''
@@ -23,19 +24,18 @@ def next_statement(program):
         except ValueError:
             return None
         else:
-            return ((program[0:index+1], program[index+1:]) if index+1 < len(program) else (program[0:index+1], ''))
+            return ((program[0:index+1], program[index+1:]) if index+1 < len(program) else (program[0:index+1], ''))view
 
-if __name__ == '__main__':
-    f = open('Basics.v', 'r')
-    program = f.read()
-
-    coqtop = Coqtop()
-
-    temp = next_statement(program)
-    if temp is None:
-        print('No more valid statements')
-    elif temp[0:2] != '(*':
-        print('A comment')
-    else:
-        program = temp[1]
-        print(coqtop.send(temp[0]))
+class CoqContext(sublime_plugin.EventListener):
+    def on_query_context(self, view, key, operator, operand, match_all):
+        if key == 'running_coqtop':
+            running = view.settings().get('coqtop_running')
+            if running is None:
+                return None
+            if operator == sublime.OP_EQUAL:
+                return running
+            elif operator == sublime.OP_NOT_EQUAL:
+                return not running
+            else:
+                return False
+        return None
