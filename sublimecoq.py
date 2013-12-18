@@ -62,6 +62,7 @@ class Coqtop:
 
     '''
     Sends statement to coqtop
+    Only give it statements, not comments
     Returns coqtop's output
     '''
     def send(self, statement):
