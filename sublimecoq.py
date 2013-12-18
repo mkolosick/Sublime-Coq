@@ -1,5 +1,5 @@
 import re
-import coqtop
+from coqtop import Coqtop
 
 '''
 returns (the next statement, rest) or
