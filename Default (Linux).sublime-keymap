@@ -4,10 +4,7 @@
         "command": "print_down",
         "context":  [
             {
-                "key": "selector", "operator": "equal", "operand": "source.coq"
-            },
-            {
-                "key": "running_coqtop", "operator": "equal", "operand": "source.coq"
+                "key": "running_coqtop", "operator": "equal", "operand": "*COQTOP*"
             }
                     ]
     },
@@ -16,10 +13,7 @@
         "command": "print_up",
         "context":  [
             {
-                "key": "selector", "operator": "equal", "operand": "source.coq"
-            },
-            {
-                "key": "running_coqtop", "operator": "equal", "operand": "source.coq"
+                "key": "running_coqtop", "operator": "equal", "operand": "*COQTOP*"
             }
                     ]
     },
@@ -28,10 +22,7 @@
         "command": "print_go_to",
         "context":  [
             {
-                "key": "selector", "operator": "equal", "operand": "source.coq"
-            },
-            {
-                "key": "running_coqtop", "operator": "equal", "operand": "source.coq"
+                "key": "running_coqtop", "operator": "equal", "operand": "*COQTOP*"
             }
                     ]
     },
@@ -40,10 +31,7 @@
         "command": "print_end",
         "context":  [
             {
-                "key": "selector", "operator": "equal", "operand": "source.coq"
-            },
-            {
-                "key": "running_coqtop", "operator": "equal", "operand": "source.coq"
+                "key": "running_coqtop", "operator": "equal", "operand": "*COQTOP*"
             }
                     ]
     },
@@ -52,10 +40,7 @@
         "command": "print_home",
         "context":  [
             {
-                "key": "selector", "operator": "equal", "operand": "source.coq"
-            },
-            {
-                "key": "running_coqtop", "operator": "equal", "operand": "source.coq"
+                "key": "running_coqtop", "operator": "equal", "operand": "*COQTOP*"
             }
                     ]
     },
@@ -64,10 +49,7 @@
         "command": "stop_coq",
         "context":  [
             {
-                "key": "selector", "operator": "equal", "operand": "source.coq"
-            },
-            {
-                "key": "running_coqtop", "operator": "equal", "operand": "source.coq"
+                "key": "running_coqtop", "operator": "equal", "operand": "*COQTOP*"
             }
                     ]
 }
