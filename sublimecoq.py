@@ -1,6 +1,6 @@
 import re
 import sublime, sublime_plugin
-from coqtop import Coqtop
+from SublimeCoq.coqtop import Coqtop
 
 '''
 returns (the next statement, rest) or
@@ -24,7 +24,19 @@ def next_statement(program):
         except ValueError:
             return None
         else:
-            return ((program[0:index+1], program[index+1:]) if index+1 < len(program) else (program[0:index+1], ''))view
+            return ((program[0:index+1], program[index+1:]) if index+1 < len(program) else (program[0:index+1], ''))
+
+class RunCoqCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        coq_syntax = self.view.settings().get('syntax')
+        program = self.view.substr(sublime.Region(0, self.view.size()))
+        window = self.view.window()
+        coqtop_view = window.new_file()
+        coqtop_view.insert(edit, 0, program)
+        coqtop_view.set_read_only(True)
+        coqtop_view.set_scratch(True)
+        coqtop_view.set_syntax_file(coq_syntax)
+        coqtop_view.set_name('*COQTOP*')
 
 class CoqContext(sublime_plugin.EventListener):
     def on_query_context(self, view, key, operator, operand, match_all):
