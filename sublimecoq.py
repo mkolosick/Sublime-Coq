@@ -31,12 +31,19 @@ class RunCoqCommand(sublime_plugin.TextCommand):
         coq_syntax = self.view.settings().get('syntax')
         program = self.view.substr(sublime.Region(0, self.view.size()))
         window = self.view.window()
-        coqtop_view = window.new_file()
-        coqtop_view.insert(edit, 0, program)
+        editor_group = window.active_group()
+        coqfile_view = window.new_file()
+        coqfile_view.insert(edit, 0, program)
+        coqfile_view.set_read_only(True)
+        coqfile_view.set_scratch(True)
+        coqfile_view.set_syntax_file(coq_syntax)
+        coqfile_view.set_name('*COQTOP*')
+        window.run_command('new_pane', {"move": False})
+        window.focus_group(editor_group)
+        coq_group = window.num_groups() - 1
+        coqtop_view = window.active_view_in_group(coq_group)
         coqtop_view.set_read_only(True)
         coqtop_view.set_scratch(True)
-        coqtop_view.set_syntax_file(coq_syntax)
-        coqtop_view.set_name('*COQTOP*')
 
 class CoqContext(sublime_plugin.EventListener):
     def on_query_context(self, view, key, operator, operand, match_all):
