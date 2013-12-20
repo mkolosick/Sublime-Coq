@@ -2,29 +2,20 @@ import re
 import sublime, sublime_plugin
 from SublimeCoq.coqtop import Coqtop
 
-'''
-returns (the next statement, rest) or
-        None if there are no more well-formed statements
-'''
-def next_statement(program):
-    if program == '':
-        return None
-    elif re.match('\\s+', program) is not None:
-        return next_statement(re.sub('\\s+', '', program, 1))
-    elif program[0:2] == '(*':
-        try:
-            index = program.index('*)')
-        except ValueError:
-            return None
+
+class PrintDownCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        current_position = self.view.settings().get('current_position')
+        current_position = self.view.find('\\s*', current_position).end()
+
+        indicator = self.view.substr(current_position) + self.view.substr(current_position + 1)
+
+        if indicator == '(*':
+            r = self.view.find('\\(\\*(.|\\n)*?\\*\\)', current_position)
         else:
-            return ((program[0:index+2], program[index+2:]) if index+2 < len(program) else (program[0:index+2], ''))
-    else:
-        try:
-            index = program.index('.')
-        except ValueError:
-            return None
-        else:
-            return ((program[0:index+1], program[index+1:]) if index+1 < len(program) else (program[0:index+1], ''))
+            r = self.view.find('(.|\\n)*?\\.', current_position)
+        self.view.settings().set('current_position', r.end())
+        self.view.add_regions(repr(current_position), [r], 'comment')
 
 class RunCoqCommand(sublime_plugin.TextCommand):
     def run(self, edit):
@@ -38,12 +29,19 @@ class RunCoqCommand(sublime_plugin.TextCommand):
         coqfile_view.set_scratch(True)
         coqfile_view.set_syntax_file(coq_syntax)
         coqfile_view.set_name('*COQTOP*')
+        coqfile_view.settings().set('coqtop_running', True)
+        coqfile_view.settings().set('current_position', 0)
+
         window.run_command('new_pane', {"move": False})
         window.focus_group(editor_group)
         coq_group = window.num_groups() - 1
         coqtop_view = window.active_view_in_group(coq_group)
         coqtop_view.set_read_only(True)
         coqtop_view.set_scratch(True)
+        coqtop_view.settings().set('coqtop_running', True)
+        
+        coqtop_view.settings().set('coqfile_group', editor_group)
+        coqfile_view.settings().set('coqtop_group', coq_group)
 
 class CoqContext(sublime_plugin.EventListener):
     def on_query_context(self, view, key, operator, operand, match_all):
