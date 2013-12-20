@@ -3,7 +3,7 @@ import sublime, sublime_plugin
 from SublimeCoq.coqtop import Coqtop
 
 
-class PrintDownCommand(sublime_plugin.TextCommand):
+class CoqNextStatementCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         current_position = self.view.settings().get('current_position')
         current_position = self.view.find('\\s*', current_position).end()
@@ -12,10 +12,18 @@ class PrintDownCommand(sublime_plugin.TextCommand):
 
         if indicator == '(*':
             r = self.view.find('\\(\\*(.|\\n)*?\\*\\)', current_position)
+            current_comment_number = self.view.settings().get('current_comment_number')
+            name = 'comment: ' + repr(current_comment_number)
+            self.view.settings().set('current_comment_number', current_comment_number + 1)
         else:
             r = self.view.find('(.|\\n)*?\\.', current_position)
+            current_statement_number = self.view.settings().get('current_statement_number')
+            name = 'statement: ' + repr(current_statement_number)
+            self.view.settings().set('current_statement_number', current_statement_number + 1)
+            
+        self.view.show(r)
         self.view.settings().set('current_position', r.end())
-        self.view.add_regions(repr(current_position), [r], 'comment')
+        self.view.add_regions(name, [r], 'comment')
 
 class RunCoqCommand(sublime_plugin.TextCommand):
     def run(self, edit):
@@ -31,6 +39,8 @@ class RunCoqCommand(sublime_plugin.TextCommand):
         coqfile_view.set_name('*COQTOP*')
         coqfile_view.settings().set('coqtop_running', True)
         coqfile_view.settings().set('current_position', 0)
+        coqfile_view.settings().set('current_comment_number', 0)
+        coqfile_view.settings().set('current_statement_number', 0)
 
         window.run_command('new_pane', {"move": False})
         window.focus_group(editor_group)
