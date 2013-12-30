@@ -11,16 +11,28 @@
     <key>patterns</key>
     <array>
         <dict>
+            <key>captures</key>
+            <dict>
+                <key>1</key>
+                <dict>
+                    <key>name</key>
+                    <string>variable.source.coq</string>
+                </dict>
+            </dict>
             <key>match</key>
-            <string>Axiom|Conjecture|Parameter|Parameters|Variable|Variables|Hypothesis|Hypotheses|Definition|Let|Fixpoint|CoFixpoint|Inductive|CoInductive|Remark|Fact|Corollary|Proposition|Example|Module|Theorem|Lemma</string>
-            <key>name</key>
-            <string>variable.source.coq</string>
+            <string>\b(Axiom|Conjecture|Parameter|Parameters|Variable|Variables|Hypothesis|Hypotheses|Definition|Let|Fixpoint|CoFixpoint|Inductive|CoInductive|Remark|Fact|Corollary|Proposition|Example|Module|Theorem|Lemma)\b</string>
         </dict>
         <dict>
+            <key>captures</key>
+            <dict>
+                <key>1</key>
+                <dict>
+                    <key>name</key>
+                    <string>keyword.source.coq</string>
+                </dict>
+            </dict>
             <key>match</key>
-            <string>Require|Proof|Qed|Type|Admitted|match|with|end|Eval|in|Check|End|Notation|forall|as|Defined|Set|fun|at|cofix|else|exists|exists2|fix|for|if|IF|let|mod|Prop|return|then|using|where|Abort</string>
-            <key>name</key>
-            <string>keyword.source.coq</string>
+            <string>\b(Require|Proof|Qed|Type|Admitted|match|with|end|Eval|in|Check|End|Notation|forall|as|Defined|Set|fun|at|cofix|else|exists|exists2|fix|for|if|IF|let|mod|Prop|return|then|using|where|Abort)\b</string>
         </dict>
         <dict>
             <key>begin</key>
