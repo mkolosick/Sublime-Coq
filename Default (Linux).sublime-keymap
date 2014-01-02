@@ -1,7 +1,7 @@
 [
     {
         "keys": ["ctrl+down"],
-        "command": "print_down",
+        "command": "coq_next_statement",
         "context":  [
             {
                 "key": "running_coqtop", "operator": "equal", "operand": "*COQTOP*"
@@ -10,7 +10,7 @@
     },
     {
         "keys": ["ctrl+up"],
-        "command": "print_up",
+        "command": "coq_undo_statement",
         "context":  [
             {
                 "key": "running_coqtop", "operator": "equal", "operand": "*COQTOP*"
@@ -19,7 +19,7 @@
     },
     {
         "keys": ["ctrl+right"],
-        "command": "print_go_to",
+        "command": "coq_go_to",
         "context":  [
             {
                 "key": "running_coqtop", "operator": "equal", "operand": "*COQTOP*"
@@ -28,7 +28,7 @@
     },
     {
         "keys": ["ctrl+end"],
-        "command": "print_end",
+        "command": "coq_end",
         "context":  [
             {
                 "key": "running_coqtop", "operator": "equal", "operand": "*COQTOP*"
@@ -37,7 +37,7 @@
     },
     {
         "keys": ["ctrl+home"],
-        "command": "print_home",
+        "command": "coq_home",
         "context":  [
             {
                 "key": "running_coqtop", "operator": "equal", "operand": "*COQTOP*"
@@ -46,7 +46,7 @@
     },
     {
         "keys": ["ctrl+escape"],
-        "command": "stop_coq",
+        "command": "coq_stop",
         "context":  [
             {
                 "key": "running_coqtop", "operator": "equal", "operand": "*COQTOP*"
