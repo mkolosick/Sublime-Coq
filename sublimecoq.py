@@ -92,34 +92,26 @@ class CoqUndoStatementCommand(sublime_plugin.TextCommand):
 class RunCoqCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         coq_syntax = self.view.settings().get('syntax')
-        program = self.view.substr(sublime.Region(0, self.view.size()))
         window = self.view.window()
         editor_group = window.active_group()
-        coqfile_view = window.new_file()
-        coqfile_view.insert(edit, 0, program)
-        coqfile_view.set_read_only(True)
-        coqfile_view.set_scratch(True)
-        coqfile_view.set_syntax_file(coq_syntax)
-        coqfile_view.set_name('*COQTOP*')
-        coqfile_view.settings().set('coqtop_running', True)
-        coqfile_view.settings().set('current_position', 0)
-        coqfile_view.settings().set('current_comment_number', 0)
-        coqfile_view.settings().set('current_statement_number', 0)
-        coqfile_view.settings().set('current_proof_number', 0)
-        coqfile_view.settings().set('proof_mode', False)
-        coqfile_view.sel().clear()
-        coqfile_view.sel().add(sublime.Region(0,0))
+        self.view.settings().set('coqtop_running', True)
+        self.view.settings().set('current_position', 0)
+        self.view.settings().set('current_comment_number', 0)
+        self.view.settings().set('current_statement_number', 0)
+        self.view.settings().set('current_proof_number', 0)
+        self.view.settings().set('proof_mode', False)
 
         window.run_command('new_pane', {"move": False})
         window.focus_group(editor_group)
         coq_group = window.num_groups() - 1
         coqtop_view = window.active_view_in_group(coq_group)
+        coqtop_view.set_syntax_file(coq_syntax)
         coqtop_view.set_read_only(True)
         coqtop_view.set_scratch(True)
         coqtop_view.settings().set('coqtop_running', True)
         
         coqtop_view.settings().set('coqfile_group', editor_group)
-        coqfile_view.settings().set('coqtop_group', coq_group)
+        self.view.settings().set('coqtop_group', coq_group)
 
 class CoqContext(sublime_plugin.EventListener):
     def on_query_context(self, view, key, operator, operand, match_all):
