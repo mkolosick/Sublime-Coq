@@ -20,15 +20,13 @@ class Coqtop:
         for line in iter(self.proc.stdout.readline, ''):
             self.queue.put(line)
 
-    '''
-    2 second timeout
-    '''
+    # 1 second timeout
     def get_lines(self):
         lines = []
         line = False
         start = time.time()
 
-        while line == False and time.time()-start < 2:
+        while line == False and time.time()-start < 1:
             try:
                 line = self.queue.get_nowait()
             except Empty:
