@@ -6,11 +6,11 @@ from SublimeCoq.coqtop import Coqtop
 class CoqNextStatementCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         if self.view.name() == '*COQTOP*':
-            coqfile_name = self.view.settings().get('coqfile_name')
+            coqfile_id = self.view.settings().get('coqfile_id')
             coqfile_group = self.view.settings().get('coqfile_group')
             views = self.view.window().views_in_group(coqfile_group)
             for v in views:
-                if v.file_name() == coqfile_name:
+                if v.id() == coqfile_id:
                     coqfile_view = v
                     break
         else:
@@ -52,11 +52,11 @@ class CoqNextStatementCommand(sublime_plugin.TextCommand):
 class CoqUndoStatementCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         if self.view.name() == '*COQTOP*':
-            coqfile_name = self.view.settings().get('coqfile_name')
+            coqfile_id = self.view.settings().get('coqfile_id')
             coqfile_group = self.view.settings().get('coqfile_group')
             views = self.view.window().views_in_group(coqfile_group)
             for v in views:
-                if v.file_name() == coqfile_name:
+                if v.id() == coqfile_id:
                     coqfile_view = v
                     break
         else:
@@ -112,11 +112,11 @@ class CoqUndoStatementCommand(sublime_plugin.TextCommand):
 class CoqStopCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         if self.view.name() == '*COQTOP*':
-            coqfile_name = self.view.settings().get('coqfile_name')
+            coqfile_id = self.view.settings().get('coqfile_id')
             coqfile_group = self.view.settings().get('coqfile_group')
             views = self.view.window().views_in_group(coqfile_group)
             for v in views:
-                if v.file_name() == coqfile_name:
+                if v.id() == coqfile_id:
                     coqfile_view = v
                     break
             self.view.window().run_command('close')
@@ -142,8 +142,6 @@ class CoqStopCommand(sublime_plugin.TextCommand):
         coqfile_view.settings().set('current_proof_number', 0)
         coqfile_view.settings().set('proof_mode', False)
 
-            
-
 class RunCoqCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         coq_syntax = self.view.settings().get('syntax')
@@ -165,8 +163,7 @@ class RunCoqCommand(sublime_plugin.TextCommand):
         coqtop_view.set_read_only(True)
         coqtop_view.set_scratch(True)
         coqtop_view.settings().set('coqtop_running', True)
-        coqtop_view.settings().set('coqfile_name', self.view.file_name())
-        print(self.view.file_name())
+        coqtop_view.settings().set('coqfile_id', self.view.id())
 
         coqtop_view.settings().set('coqfile_group', editor_group)
         self.view.settings().set('coqtop_group', coq_group)
