@@ -87,7 +87,40 @@ class CoqUndoStatementCommand(sublime_plugin.TextCommand):
         self.view.settings().set('current_position', previous_region.begin())
 
 
+class CoqStopCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        if self.view.name() == '*COQTOP*':
+            coqfile_name = self.view.settings().get('coqfile_name')
+            coqfile_group = self.view.settings().get('coqfile_group')
+            views = self.view.window().views_in_group(coqfile_group)
+            for v in views:
+                if v.name() == coqfile_name:
+                    coqfile_view = v
+                    break
+            self.view.window().run_command('close')
+        else:
+            coqfile_view = self.view
+            coqtop_group = self.view.settings().get('coqtop_group')
+            views = self.view.window().views_in_group(coqtop_group)
+            for v in views:
+                if v.name() == '*COQTOP*':
+                    self.view.window().focus_view(v)
+                    v.window().run_command('close')
+                    break
+        coqfile_view.settings().set('coqtop_running', False)
+        for number in range(0, coqfile_view.settings().get('current_comment_number')):
+            coqfile_view.erase_regions('comment: ' + repr(number))
+        for number in range(0, coqfile_view.settings().get('current_statement_number')):
+            coqfile_view.erase_regions('statement: ' + repr(number))
+        for number in range(0, coqfile_view.settings().get('current_proof_number')):
+            coqfile_view.erase_regions('proof: ' + repr(number))
+        coqfile_view.settings().set('current_position', 0)
+        coqfile_view.settings().set('current_comment_number', 0)
+        coqfile_view.settings().set('current_statement_number', 0)
+        coqfile_view.settings().set('current_proof_number', 0)
+        coqfile_view.settings().set('proof_mode', False)
 
+            
 
 class RunCoqCommand(sublime_plugin.TextCommand):
     def run(self, edit):
@@ -106,10 +139,12 @@ class RunCoqCommand(sublime_plugin.TextCommand):
         coq_group = window.num_groups() - 1
         coqtop_view = window.active_view_in_group(coq_group)
         coqtop_view.set_syntax_file(coq_syntax)
+        coqtop_view.set_name('*COQTOP*')
         coqtop_view.set_read_only(True)
         coqtop_view.set_scratch(True)
         coqtop_view.settings().set('coqtop_running', True)
-        
+        coqtop_view.settings().set('coqfile_name', self.view.name())
+
         coqtop_view.settings().set('coqfile_group', editor_group)
         self.view.settings().set('coqtop_group', coq_group)
 
