@@ -1,5 +1,6 @@
 from subprocess import Popen, PIPE, DEVNULL
 from threading import Thread
+import time
 
 try:
     from Queue import Queue, Empty
@@ -19,11 +20,15 @@ class Coqtop:
         for line in iter(self.proc.stdout.readline, ''):
             self.queue.put(line)
 
+    '''
+    2 second timeout
+    '''
     def get_lines(self):
         lines = []
         line = False
+        start = time.time()
 
-        while line == False:
+        while line == False and time.time()-start < 2:
             try:
                 line = self.queue.get_nowait()
             except Empty:
