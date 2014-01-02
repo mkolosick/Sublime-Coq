@@ -14,7 +14,7 @@ class Coqtop:
         self.thread = Thread(target=self.enqueue_output)
         self.thread.daemon = True
         self.thread.start()
-        print(self.get_lines())
+        self.get_lines()
 
     def enqueue_output(self):
         for line in iter(self.proc.stdout.readline, ''):
@@ -23,18 +23,13 @@ class Coqtop:
     # 1 second timeout
     def get_lines(self):
         lines = []
-        line = False
         start = time.time()
 
-        while line == False and time.time()-start < 1:
-            try:
-                line = self.queue.get_nowait()
-            except Empty:
-                line = False
-            else:
-                lines.append(line)
-                if not self.queue.empty():
-                    line = False
+        while time.time() - start < 1:
+            while not self.queue.empty():
+                lines.append(self.queue.get_nowait())
+            if lines:
+                break
 
         return lines
 
