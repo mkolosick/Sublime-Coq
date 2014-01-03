@@ -9,25 +9,40 @@ except ImportError:
 
 class Coqtop:
     def __init__(self):
-        self.proc = Popen(['coqtop'], stdin=PIPE, stderr=DEVNULL, stdout=PIPE, universal_newlines=True)
-        self.queue = Queue()
-        self.thread = Thread(target=self.enqueue_output)
-        self.thread.daemon = True
-        self.thread.start()
-        self.get_lines()
+        self.proc = Popen(['coqtop'], stdin=PIPE, stderr=PIPE, stdout=PIPE, universal_newlines=True)
+        self.out_queue = Queue()
+        self.out_thread = Thread(target=self.enqueue_output)
+        self.out_thread.daemon = True
+        self.out_thread.start()
+        self.err_queue = Queue()
+        self.err_thread = Thread(target=self.enqueue_err)
+        self.err_thread.daemon = True
+        self.err_thread.start()
+        self.get_output()
+        self.get_prompt()
+
+    def kill(self):
+        self.proc.kill()
 
     def enqueue_output(self):
         for line in iter(self.proc.stdout.readline, ''):
-            self.queue.put(line)
+            self.out_queue.put(line)
+
+    def enqueue_err(self):
+        while True:
+            data = self.proc.stderr.read(1)
+            if not data:
+                break
+            self.err_queue.put(data)
 
     # 1 second timeout
-    def get_lines(self):
+    def get_output(self):
         lines = []
         start = time.time()
 
         while time.time() - start < 1:
-            while not self.queue.empty():
-                lines.append(self.queue.get_nowait())
+            while not self.out_queue.empty():
+                lines.append(self.out_queue.get_nowait())
             if lines:
                 break
 
@@ -41,4 +56,15 @@ class Coqtop:
     def send(self, statement):
         self.proc.stdin.write(statement+'\n')
         self.proc.stdin.flush()
-        return self.get_lines()
+
+    def get_prompt(self):
+        lines = []
+        start = time.time()
+
+        while time.time() - start < 1:
+            while not self.err_queue.empty():
+                lines.append(self.err_queue.get_nowait())
+            if lines:
+                break
+
+        return ''.join(lines)
