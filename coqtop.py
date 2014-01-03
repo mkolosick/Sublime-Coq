@@ -26,7 +26,15 @@ class Coqtop:
                 break
             self.out_queue.put(data)
 
+    # strips preceding prompts and returns (output, prompt)
     def get_output(self):
+        raw = self.get_raw_output()
+        while raw[0:6] == ['C', 'o', 'q', ' ', '<', ' ']:
+            raw[:] = raw[6:]
+
+        return ''.join(raw)
+
+    def get_raw_output(self):
         lines = []
         start = time.time()
 
@@ -36,7 +44,7 @@ class Coqtop:
             if lines[-2:] == ['<', ' ']:
                 break
 
-        return ''.join(lines)
+        return lines
 
     '''
     Sends statement to coqtop
