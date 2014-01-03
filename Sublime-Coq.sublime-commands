@@ -1,0 +1,3 @@
+[
+    { "caption": "SublimeCoq: Run", "command": "run_coq"}
+]
