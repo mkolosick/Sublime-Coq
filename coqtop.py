@@ -25,8 +25,11 @@ class Coqtop:
         self.proc.kill()
 
     def enqueue_output(self):
-        for line in iter(self.proc.stdout.readline, ''):
-            self.out_queue.put(line)
+        while True:
+            data = self.proc.stdout.read(1)
+            if not data:
+                break
+            self.out_queue.put(data)
 
     def enqueue_err(self):
         while True:
@@ -35,7 +38,6 @@ class Coqtop:
                 break
             self.err_queue.put(data)
 
-    # 1 second timeout
     def get_output(self):
         lines = []
         start = time.time()
@@ -46,7 +48,7 @@ class Coqtop:
             if lines:
                 break
 
-        return lines
+        return ''.join(lines)
 
     '''
     Sends statement to coqtop

@@ -6,17 +6,48 @@ class CoqtopManager:
     def __init__(self):
         self.coqtop = None
         self.output_view = None
+        self.focused_proof_mode = False
 
     def start(self):
         self.coqtop = Coqtop()
 
     def send(self, statement):
-        result_list = self.coqtop.send(statement)
-        output = ''.join(result_list)
+        self.coqtop.send(statement)
+        self.output_view.run_command('coqtop_clear')
+        prompt = self.coqtop.get_prompt()
+        if len(prompt) < 6 or (prompt[0:5] != 'Coq <' and prompt[0:6] != '\nCoq <'):
+            print('proof mode')
+            self.focused_proof_mode = True
+        else:
+            self.focused_proof_mode = False
+
+    def send_and_receive(self, statement):
+        self.coqtop.send(statement)
+        output = self.coqtop.get_output()
         self.output_view.run_command('coqtop_output', {'output': output})
+        prompt = self.coqtop.get_prompt()
+        if len(prompt) < 6 or (prompt[0:5] != 'Coq <' and prompt[0:6] != '\nCoq <'):
+            self.focused_proof_mode = True
+        else:
+            self.focused_proof_mode = False
+
+    def stop(self):
+        if self.coqtop is not None:
+            self.coqtop.kill()
+        self.coqtop = None
+        self.output_view = None
+        self.focused_proof_mode = False
+
 
 
 manager = CoqtopManager()
+
+class CoqtopClearCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        entire_region = sublime.Region(0, self.view.size())
+        self.view.set_read_only(False)
+        self.view.erase(edit, entire_region)
+        self.view.set_read_only(True)
 
 class CoqtopOutputCommand(sublime_plugin.TextCommand):
     def run(self, edit, output):
@@ -67,7 +98,7 @@ class CoqNextStatementCommand(sublime_plugin.TextCommand):
                 current_statement_number = coqfile_view.settings().get('current_statement_number')
                 name = 'statement: ' + repr(current_statement_number)
                 coqfile_view.settings().set('current_statement_number', current_statement_number + 1)
-            manager.send(coqfile_view.substr(r))
+            manager.send_and_receive(coqfile_view.substr(r))
             
         coqfile_view.show(r)
         coqfile_view.settings().set('current_position', r.end())
@@ -90,10 +121,9 @@ class CoqUndoStatementCommand(sublime_plugin.TextCommand):
             previous_proof_number = coqfile_view.settings().get('current_proof_number') - 1
             previous_region = coqfile_view.get_regions('proof: ' + repr(previous_proof_number))[0]
             if coqfile_view.substr(previous_region) == 'Proof.':
-                print('Abort and resend.')
                 coqfile_view.settings().set('proof_mode', False)
             else:
-                print('Undo.')
+                manager.send_and_receive('Undo.')
             coqfile_view.settings().set('current_proof_number', previous_proof_number)
             coqfile_view.erase_regions('proof: ' + repr(previous_proof_number))
         else:
@@ -116,7 +146,10 @@ class CoqUndoStatementCommand(sublime_plugin.TextCommand):
             else:
                 previous_region = previous_statement_region
                 name = coqfile_view.substr(coqfile_view.word(coqfile_view.word(previous_region.begin()).end() + 1))
-                print('Reset ' + name)
+                if manager.focused_proof_mode:
+                    manager.send_and_receive('Abort.')
+                else:
+                    manager.send('Reset ' + name + '.')
                 while True:
                     previous_proof_number = coqfile_view.settings().get('current_proof_number') - 1
                     if previous_proof_number == -1:
@@ -165,6 +198,8 @@ class CoqStopCommand(sublime_plugin.TextCommand):
         coqfile_view.settings().set('current_statement_number', 0)
         coqfile_view.settings().set('current_proof_number', 0)
         coqfile_view.settings().set('proof_mode', False)
+
+        manager.stop()
 
 class RunCoqCommand(sublime_plugin.TextCommand):
     def run(self, edit):
