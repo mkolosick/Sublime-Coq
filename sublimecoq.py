@@ -14,18 +14,16 @@ class CoqtopManager:
     def send(self, statement):
         self.coqtop.send(statement)
         self.output_view.run_command('coqtop_clear')
-        prompt = self.coqtop.get_prompt()
+        (output, prompt) = self.coqtop.get_output()
         if len(prompt) < 6 or (prompt[0:5] != 'Coq <' and prompt[0:6] != '\nCoq <'):
-            print('proof mode')
             self.focused_proof_mode = True
         else:
             self.focused_proof_mode = False
-
+            
     def send_and_receive(self, statement):
         self.coqtop.send(statement)
-        output = self.coqtop.get_output()
+        (output, prompt) = self.coqtop.get_output()
         self.output_view.run_command('coqtop_output', {'output': output})
-        prompt = self.coqtop.get_prompt()
         if len(prompt) < 6 or (prompt[0:5] != 'Coq <' and prompt[0:6] != '\nCoq <'):
             self.focused_proof_mode = True
         else:
@@ -37,8 +35,6 @@ class CoqtopManager:
         self.coqtop = None
         self.output_view = None
         self.focused_proof_mode = False
-
-
 
 manager = CoqtopManager()
 

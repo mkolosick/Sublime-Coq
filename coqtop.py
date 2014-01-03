@@ -30,9 +30,20 @@ class Coqtop:
     def get_output(self):
         raw = self.get_raw_output()
         while raw[0:6] == ['C', 'o', 'q', ' ', '<', ' ']:
-            raw[:] = raw[6:]
+            raw = raw[6:]
 
-        return ''.join(raw)
+        raw_string = ''.join(raw)
+
+        output = ''
+        prompt = ''
+
+        for char in raw:
+            prompt += char
+            if char == '\n':
+                output += prompt
+                prompt = ''
+
+        return (output, prompt)
 
     def get_raw_output(self):
         lines = []
