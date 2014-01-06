@@ -1,0 +1,56 @@
+[
+    {
+        "keys": ["ctrl+down"],
+        "command": "coq_next_statement",
+        "context":  [
+            {
+                "key": "running_coqtop", "operator": "equal", "operand": "*COQTOP*"
+            }
+                    ]
+    },
+    {
+        "keys": ["ctrl+up"],
+        "command": "coq_undo_statement",
+        "context":  [
+            {
+                "key": "running_coqtop", "operator": "equal", "operand": "*COQTOP*"
+            }
+                    ]
+    },
+    {
+        "keys": ["ctrl+right"],
+        "command": "coq_go_to",
+        "context":  [
+            {
+                "key": "running_coqtop", "operator": "equal", "operand": "*COQTOP*"
+            }
+                    ]
+    },
+    {
+        "keys": ["ctrl+end"],
+        "command": "coq_end",
+        "context":  [
+            {
+                "key": "running_coqtop", "operator": "equal", "operand": "*COQTOP*"
+            }
+                    ]
+    },
+    {
+        "keys": ["ctrl+home"],
+        "command": "coq_home",
+        "context":  [
+            {
+                "key": "running_coqtop", "operator": "equal", "operand": "*COQTOP*"
+            }
+                    ]
+    },
+    {
+        "keys": ["ctrl+escape"],
+        "command": "coq_stop",
+        "context":  [
+            {
+                "key": "running_coqtop", "operator": "equal", "operand": "*COQTOP*"
+            }
+                    ]
+}
+]

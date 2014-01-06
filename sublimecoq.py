@@ -19,7 +19,7 @@ class CoqtopManager:
             self.focused_proof_mode = True
         else:
             self.focused_proof_mode = False
-            
+
     def send_and_receive(self, statement):
         self.coqtop.send(statement)
         (output, prompt) = self.coqtop.get_output()
