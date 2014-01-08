@@ -171,8 +171,8 @@ class RunCoqCommand(sublime_plugin.TextCommand):
         coq_syntax = self.view.settings().get('syntax')
         window = self.view.window()
         editor_group = window.active_group()
-
-        manager.coqtop_running = True
+        self.view.settings().set('coqtop_running', True)
+        
         manager.current_position = 0
         manager.current_comment_number = 0
         manager.current_statement_number = 0
@@ -193,6 +193,24 @@ class RunCoqCommand(sublime_plugin.TextCommand):
         manager.output_view = coqtop_view
 
         manager.start()
+
+class CoqBackspace(sublime_plugin.TextCommand):
+    def run(self, edit):
+        if self.view.name() != '*COQTOP*':
+            cursor_position = self.view.sel()[0].begin()
+            if cursor_position <= manager.current_position:
+                return
+            else:
+                self.view.run_command('left_delete')
+
+class CoqDelete(sublime_plugin.TextCommand):
+    def run(self, edit):
+        if self.view.name() != '*COQTOP*':
+            cursor_position = self.view.sel()[0].begin()
+            if cursor_position < manager.current_position:
+                return
+            else:
+                self.view.run_command('right_delete')
 
 class CoqContext(sublime_plugin.EventListener):
     def on_query_context(self, view, key, operator, operand, match_all):
