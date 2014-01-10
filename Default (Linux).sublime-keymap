@@ -52,5 +52,23 @@
                 "key": "running_coqtop", "operator": "equal", "operand": "*COQTOP*"
             }
                     ]
-}
+    },
+    {
+        "keys": ["backspace"],
+        "command": "coq_backspace",
+        "context":  [
+            {
+                "key": "running_coqtop", "operator": "equal", "operand": "*COQTOP*"
+            }
+                    ]
+    },
+    {
+        "keys": ["delete"],
+        "command": "coq_delete",
+        "context":  [
+            {
+                "key": "running_coqtop", "operator": "equal", "operand": "*COQTOP*"
+            }
+                    ]
+    }
 ]
