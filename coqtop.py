@@ -1,6 +1,7 @@
 from subprocess import Popen, PIPE, STDOUT
 from threading import Thread
 import time
+import sys
 
 try:
     from Queue import Queue, Empty
@@ -9,7 +10,12 @@ except ImportError:
 
 class Coqtop:
     def __init__(self):
-        self.proc = Popen(['coqtop'], stdin=PIPE, stderr=STDOUT, stdout=PIPE, universal_newlines=True)
+        if sys.platform.startswith('darwin'):
+            self.proc = Popen(['coqtop'], stdin=PIPE, stderr=STDOUT, stdout=PIPE, universal_newlines=True)
+        elif sys.platform.startswith('win32') or sys.platform.startswith('cygwin'):
+            self.proc = Popen(['coqtop'], stdin=PIPE, stderr=STDOUT, stdout=PIPE, universal_newlines=True)
+        else:
+            self.proc = Popen(['coqtop'], stdin=PIPE, stderr=STDOUT, stdout=PIPE, universal_newlines=True)
         self.out_queue = Queue()
         self.out_thread = Thread(target=self.enqueue_output)
         self.out_thread.daemon = True
