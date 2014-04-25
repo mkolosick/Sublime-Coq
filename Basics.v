@@ -166,7 +166,7 @@ Proof.
 Qed.
 
 (* Exercise: 3 stars (binary) *)
-Inductive bin : Type := 
+Inductive bin : Type :=
   | O : bin
   | twice : bin -> bin
   | one_more_twice : bin -> bin.

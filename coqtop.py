@@ -15,7 +15,7 @@ class Coqtop:
         elif sys.platform.startswith('win32') or sys.platform.startswith('cygwin'):
             self.proc = Popen(['coqtop'], stdin=PIPE, stderr=STDOUT, stdout=PIPE, universal_newlines=True)
         else:
-            self.proc = Popen(['coqtop'], stdin=PIPE, stderr=STDOUT, stdout=PIPE, universal_newlines=True)
+            self.proc = Popen(['coqtop -init-file ~/.config/coq/coqrc'], stdin=PIPE, stderr=STDOUT, stdout=PIPE, universal_newlines=True)
         self.out_queue = Queue()
         self.out_thread = Thread(target=self.enqueue_output)
         self.out_thread.daemon = True
