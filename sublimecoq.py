@@ -1,6 +1,6 @@
 import re
 import sublime, sublime_plugin
-from SublimeCoq.coqtop import Coqtop
+from .coqtop import Coqtop
 
 class CoqtopManager:
     def __init__(self):
@@ -15,22 +15,15 @@ class CoqtopManager:
         self.proof_mode = False
 
     def start(self):
-        self.coqtop = Coqtop()
+        self.coqtop = Coqtop(self)
 
     def send(self, statement):
-        self.coqtop.send(statement)
         self.output_view.run_command('coqtop_clear')
-        (output, prompt) = self.coqtop.get_output()
-        if len(prompt) < 6 or (prompt[0:5] != 'Coq <' and prompt[0:6] != '\nCoq <'):
-            self.focused_proof_mode = True
-        else:
-            self.focused_proof_mode = False
-
-    def send_and_receive(self, statement):
         self.coqtop.send(statement)
-        (output, prompt) = self.coqtop.get_output()
+
+    def receive(self, output, prompt):
         self.output_view.run_command('coqtop_output', {'output': output})
-        if len(prompt) < 6 or (prompt[0:5] != 'Coq <' and prompt[0:6] != '\nCoq <'):
+        if prompt != 'Coq < ':
             self.focused_proof_mode = True
         else:
             self.focused_proof_mode = False
@@ -68,7 +61,7 @@ class CoqtopOutputCommand(sublime_plugin.TextCommand):
 class CoqNextStatementCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         coqfile_view = manager.file_view
-        
+
         manager.current_position = coqfile_view.find('\\s*', manager.current_position).end()
 
         indicator = coqfile_view.substr(manager.current_position) + coqfile_view.substr(manager.current_position + 1)
@@ -93,8 +86,8 @@ class CoqNextStatementCommand(sublime_plugin.TextCommand):
             else:
                 name = 'statement: ' + repr(manager.current_statement_number)
                 manager.current_statement_number = manager.current_statement_number + 1
-            manager.send_and_receive(coqfile_view.substr(r))
-            
+            manager.send(coqfile_view.substr(r))
+
         coqfile_view.show(r)
         manager.current_position = r.end()
         coqfile_view.add_regions(name, [r], 'comment')
@@ -109,7 +102,7 @@ class CoqUndoStatementCommand(sublime_plugin.TextCommand):
             if coqfile_view.substr(previous_region) == 'Proof.':
                 manager.proof_mode = False
             else:
-                manager.send_and_receive('Undo.')
+                manager.send('Undo.')
             manager.current_proof_number = previous_proof_number
             coqfile_view.erase_regions('proof: ' + repr(previous_proof_number))
         else:
@@ -133,7 +126,7 @@ class CoqUndoStatementCommand(sublime_plugin.TextCommand):
                 previous_region = previous_statement_region
                 name = coqfile_view.substr(coqfile_view.word(coqfile_view.word(previous_region.begin()).end() + 1))
                 if manager.focused_proof_mode:
-                    manager.send_and_receive('Abort.')
+                    manager.send('Abort.')
                 else:
                     manager.send('Reset ' + name + '.')
                 while True:
@@ -172,7 +165,7 @@ class RunCoqCommand(sublime_plugin.TextCommand):
         window = self.view.window()
         editor_group = window.active_group()
         self.view.settings().set('coqtop_running', True)
-        
+
         manager.current_position = 0
         manager.current_comment_number = 0
         manager.current_statement_number = 0
@@ -188,7 +181,7 @@ class RunCoqCommand(sublime_plugin.TextCommand):
         coqtop_view.set_read_only(True)
         coqtop_view.set_scratch(True)
         coqtop_view.settings().set('coqtop_running', True)
-        
+
         manager.file_view = self.view
         manager.output_view = coqtop_view
 
