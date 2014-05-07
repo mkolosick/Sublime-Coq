@@ -187,24 +187,6 @@ class RunCoqCommand(sublime_plugin.TextCommand):
 
         manager.start()
 
-class CoqBackspace(sublime_plugin.TextCommand):
-    def run(self, edit):
-        if self.view.name() != '*COQTOP*':
-            cursor_position = self.view.sel()[0].begin()
-            if cursor_position <= manager.current_position:
-                return
-            else:
-                self.view.run_command('left_delete')
-
-class CoqDelete(sublime_plugin.TextCommand):
-    def run(self, edit):
-        if self.view.name() != '*COQTOP*':
-            cursor_position = self.view.sel()[0].begin()
-            if cursor_position < manager.current_position:
-                return
-            else:
-                self.view.run_command('right_delete')
-
 class CoqContext(sublime_plugin.EventListener):
     def on_query_context(self, view, key, operator, operand, match_all):
         if key == 'running_coqtop':
@@ -218,3 +200,20 @@ class CoqContext(sublime_plugin.EventListener):
             else:
                 return False
         return None
+
+    def on_selection_modified(self, view):
+        if view.settings().get('coqtop_running') == True:
+            regions = []
+            for number in range(0, manager.current_statement_number):
+                regions += view.get_regions('statement: ' + repr(number))
+            for number in range(0, manager.current_proof_number):
+                regions += view.get_regions('proof: ' + repr(number))
+
+            selection = view.sel()
+
+            view.set_read_only(False)
+            for region in regions:
+                for selected in selection:
+                    if region.intersects(selected):
+                        view.set_read_only(True)
+                        break
