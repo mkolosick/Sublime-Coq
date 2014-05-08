@@ -90,7 +90,7 @@ class CoqNextStatementCommand(sublime_plugin.TextCommand):
 
         coqfile_view.show(r)
         manager.current_position = r.end()
-        coqfile_view.add_regions(name, [r], 'comment')
+        coqfile_view.add_regions(name, [r], 'meta.coq.proven')
 
 class CoqUndoStatementCommand(sublime_plugin.TextCommand):
     def run(self, edit):
