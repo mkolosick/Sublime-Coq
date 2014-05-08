@@ -1,0 +1,15 @@
+{
+  "scope": "proof.coq",
+
+  "completions":
+  [
+    { "trigger": "simpl", "contents": "simpl. $0" },
+    { "trigger": "reflexivity", "contents": "reflexivity. $0" },
+    { "trigger": "intros", "contents": "intros $1. $0" },
+    { "trigger": "rewrite", "contents": "rewrite -> $1. $0" },
+    { "trigger": "destruct", "contents": "destruct $1 as [$2]. $0"},
+    { "trigger": "compute", "contents": "compute. $0" },
+
+    { "trigger": "Qed", "contents": "Qed." }
+  ]
+}

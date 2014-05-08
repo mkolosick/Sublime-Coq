@@ -23,8 +23,8 @@ class CoqtopManager:
             self.focused_proof_mode = False
 
         if self.expects_result:
-            if not re.search(r'(^Error:|^Syntax error:)', output, re.M):
-                self.output_view.run_command('coqtop_success')
+            if not re.search(r'(^Error:|^Syntax [eE]rror:)', output, re.M):
+                self.file_view.run_command('coqtop_success')
             self.expects_result = False
 
     def reset(self):
@@ -65,7 +65,7 @@ class CoqtopSuccessCommand(sublime_plugin.TextCommand):
         r = coqfile_view.find(r'(.|\n)*?\.', manager.current_position)
         text = coqfile_view.substr(r)
 
-        if coqfile_view.scope_name(manager.current_position) == 'source.coq keyword.source.coq ':
+        if 'keyword.coq' in coqfile_view.scope_name(manager.current_position).split(' '):
             if text == 'Proof.':
                 manager.proof_mode = True
 

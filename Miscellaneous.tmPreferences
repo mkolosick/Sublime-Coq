@@ -9,7 +9,7 @@
   <key>settings</key>
   <dict>
     <key>increaseIndentPattern</key>
-    <string>.*\bProof\.|.*:=|.*\bdestruct\b</string>
+    <string>.*\bProof\.|.*:=|.*\bdestruct(.*)\.$</string>
     <key>decreaseIndentPattern</key>
     <string>\s*Qed\.\s*</string>
     <key>shellVariables</key>

@@ -11,12 +11,36 @@
     <key>patterns</key>
     <array>
         <dict>
+            <key>beginCaptures</key>
+            <dict>
+                <key>1</key>
+                <dict>
+                    <key>name</key>
+                    <string>keyword.coq</string>
+                </dict>
+            </dict>
+            <key>begin</key>
+            <string>\b(Proof)\.</string>
+            <key>endCaptures</key>
+            <dict>
+                <key>1</key>
+                <dict>
+                    <key>name</key>
+                    <string>keyword.coq</string>
+                </dict>
+            </dict>
+            <key>end</key>
+            <string>\b(Qed)\.</string>
+            <key>name</key>
+            <string>proof.coq</string>
+        </dict>
+        <dict>
             <key>captures</key>
             <dict>
                 <key>1</key>
                 <dict>
                     <key>name</key>
-                    <string>variable.source.coq</string>
+                    <string>variable.coq</string>
                 </dict>
             </dict>
             <key>match</key>
@@ -28,7 +52,7 @@
                 <key>1</key>
                 <dict>
                     <key>name</key>
-                    <string>keyword.source.coq</string>
+                    <string>keyword.coq</string>
                 </dict>
             </dict>
             <key>match</key>
@@ -40,7 +64,13 @@
             <key>end</key>
             <string>\*\)</string>
             <key>name</key>
-            <string>comment.source.coq</string>
+            <string>comment.coq</string>
+        </dict>
+        <dict>
+            <key>match</key>
+            <string>:.*?[,.]</string>
+            <key>name</key>
+            <string>type.coq</string>
         </dict>
     </array>
     <key>scopeName</key>
