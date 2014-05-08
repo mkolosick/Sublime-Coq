@@ -27,14 +27,13 @@ class Coqtop:
         self.proc.kill()
 
     def receive(self):
-        buf = ""
-
         while True:
+            buf = ""
+
             while not buf.endswith(' < '):
                 select.select([self.proc.stdout], [], [self.proc.stdout])
                 try:
                     data = os.read(self.proc.stdout.fileno(), 256)
-                    print(data)
                     buf += data.decode(encoding='UTF-8')
                 except OSError as e:
                     print(e)
@@ -42,13 +41,14 @@ class Coqtop:
             while buf.startswith('Coq < '):
                 buf = buf[6:]
 
+            if buf == "":
+                continue
+
             if buf.find("\n") == -1:
                 output = ""
                 prompt = buf
             else:
                 (output, prompt) = buf.rsplit("\n", 1)
-
-            buf = ""
 
             self.manager.receive(output, prompt)
 
