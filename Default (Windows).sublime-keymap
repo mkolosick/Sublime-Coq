@@ -18,7 +18,7 @@
         ]
     },
     {
-        "keys": ["ctrl+right"],
+        "keys": ["ctrl+enter"],
         "command": "coq_go_to",
         "context":  [
             {
