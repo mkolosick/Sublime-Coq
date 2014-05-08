@@ -5,14 +5,7 @@ from .coqtop import Coqtop
 class CoqtopManager:
     def __init__(self):
         self.coqtop = None
-        self.output_view = None
-        self.file_view = None
-        self.focused_proof_mode = False
-        self.current_position = 0
-        self.current_comment_number = 0
-        self.current_statement_number = 0
-        self.current_proof_number = 0
-        self.proof_mode = False
+        self.reset()
 
     def start(self):
         self.coqtop = Coqtop(self)
@@ -23,12 +16,18 @@ class CoqtopManager:
 
     def receive(self, output, prompt):
         self.output_view.run_command('coqtop_output', {'output': output})
+
         if prompt != 'Coq < ':
             self.focused_proof_mode = True
         else:
             self.focused_proof_mode = False
 
-    def stop(self):
+        if self.expects_result:
+            if not re.search(r'(^Error:|^Syntax error:)', output, re.M):
+                self.output_view.run_command('coqtop_success')
+            self.expects_result = False
+
+    def reset(self):
         if self.coqtop is not None:
             self.coqtop.kill()
         self.coqtop = None
@@ -40,6 +39,7 @@ class CoqtopManager:
         self.current_statement_number = 0
         self.current_proof_number = 0
         self.proof_mode = False
+        self.expects_result = False
 
 manager = CoqtopManager()
 
@@ -58,39 +58,51 @@ class CoqtopOutputCommand(sublime_plugin.TextCommand):
         self.view.insert(edit, 0, output)
         self.view.set_read_only(True)
 
-class CoqNextStatementCommand(sublime_plugin.TextCommand):
+class CoqtopSuccessCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         coqfile_view = manager.file_view
 
-        manager.current_position = coqfile_view.find('\\s*', manager.current_position).end()
+        r = coqfile_view.find(r'(.|\n)*?\.', manager.current_position)
+        text = coqfile_view.substr(r)
 
-        indicator = coqfile_view.substr(manager.current_position) + coqfile_view.substr(manager.current_position + 1)
+        if coqfile_view.scope_name(manager.current_position) == 'source.coq keyword.source.coq ':
+            if text == 'Proof.':
+                manager.proof_mode = True
 
-        if indicator == '(*':
-            r = coqfile_view.find('\\(\\*(.|\\n)*?\\*\\)', manager.current_position)
-            name = 'comment: ' + repr(manager.current_comment_number)
-            manager.current_comment_number = manager.current_comment_number + 1
+        if manager.proof_mode:
+            if text == 'Qed.' or text == 'Admitted.' or text == 'Save.' or text == 'Defined.':
+                manager.proof_mode = False
+            name = 'proof: ' + repr(manager.current_proof_number)
+            manager.current_proof_number = manager.current_proof_number + 1
         else:
-            r = coqfile_view.find('(.|\\n)*?\\.', manager.current_position)
-            text = coqfile_view.substr(r)
-
-            if coqfile_view.scope_name(manager.current_position) == 'source.coq keyword.source.coq ':
-                if text == 'Proof.':
-                    manager.proof_mode = True
-
-            if manager.proof_mode:
-                if text == 'Qed.' or text == 'Admitted.' or text == 'Save.' or text == 'Defined.':
-                    manager.proof_mode = False
-                name = 'proof: ' + repr(manager.current_proof_number)
-                manager.current_proof_number = manager.current_proof_number + 1
-            else:
-                name = 'statement: ' + repr(manager.current_statement_number)
-                manager.current_statement_number = manager.current_statement_number + 1
-            manager.send(coqfile_view.substr(r))
+            name = 'statement: ' + repr(manager.current_statement_number)
+            manager.current_statement_number = manager.current_statement_number + 1
 
         coqfile_view.show(r)
         manager.current_position = r.end()
         coqfile_view.add_regions(name, [r], 'meta.coq.proven')
+
+class CoqNextStatementCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        coqfile_view = manager.file_view
+
+        manager.current_position = coqfile_view.find(r'\s*', manager.current_position).end()
+
+        indicator = coqfile_view.substr(manager.current_position) + coqfile_view.substr(manager.current_position + 1)
+
+        if indicator == '(*':
+            r = coqfile_view.find(r'\(\*(.|\n)*?\*\)', manager.current_position)
+            name = 'comment: ' + repr(manager.current_comment_number)
+            manager.current_comment_number = manager.current_comment_number + 1
+
+            coqfile_view.show(r)
+            manager.current_position = r.end()
+            coqfile_view.add_regions(name, [r], 'meta.coq.proven')
+        else:
+            manager.expects_result = True
+
+            r = coqfile_view.find(r'(.|\n)*?\.', manager.current_position)
+            manager.send(coqfile_view.substr(r))
 
 class CoqUndoStatementCommand(sublime_plugin.TextCommand):
     def run(self, edit):
@@ -130,10 +142,10 @@ class CoqUndoStatementCommand(sublime_plugin.TextCommand):
                 else:
                     manager.send('Reset ' + name + '.')
                 while True:
-                    previous_proof_number = manager.current_proof_number - 1
-                    if previous_proof_number == -1:
+                    if manager.current_proof_number == 0:
                         break
                     else:
+                        previous_proof_number = manager.current_proof_number - 1
                         previous_proof_region = coqfile_view.get_regions('proof: ' + repr(previous_proof_number))[0]
                         if previous_proof_region.begin() < previous_region.begin():
                             break
@@ -157,7 +169,7 @@ class CoqStopCommand(sublime_plugin.TextCommand):
         for number in range(0, manager.current_proof_number):
             coqfile_view.erase_regions('proof: ' + repr(number))
 
-        manager.stop()
+        manager.reset()
 
 class RunCoqCommand(sublime_plugin.TextCommand):
     def run(self, edit):
