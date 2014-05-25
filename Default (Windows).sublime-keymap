@@ -6,7 +6,7 @@
             {
                 "key": "running_coqtop", "operator": "equal", "operand": "*COQTOP*"
             }
-                    ]
+        ]
     },
     {
         "keys": ["ctrl+up"],
@@ -15,16 +15,16 @@
             {
                 "key": "running_coqtop", "operator": "equal", "operand": "*COQTOP*"
             }
-                    ]
+        ]
     },
     {
-        "keys": ["ctrl+right"],
+        "keys": ["ctrl+enter"],
         "command": "coq_go_to",
         "context":  [
             {
                 "key": "running_coqtop", "operator": "equal", "operand": "*COQTOP*"
             }
-                    ]
+        ]
     },
     {
         "keys": ["ctrl+end"],
@@ -33,7 +33,7 @@
             {
                 "key": "running_coqtop", "operator": "equal", "operand": "*COQTOP*"
             }
-                    ]
+        ]
     },
     {
         "keys": ["ctrl+home"],
@@ -42,7 +42,7 @@
             {
                 "key": "running_coqtop", "operator": "equal", "operand": "*COQTOP*"
             }
-                    ]
+        ]
     },
     {
         "keys": ["escape"],
@@ -51,24 +51,6 @@
             {
                 "key": "running_coqtop", "operator": "equal", "operand": "*COQTOP*"
             }
-                    ]
-    },
-    {
-        "keys": ["backspace"],
-        "command": "coq_backspace",
-        "context":  [
-            {
-                "key": "running_coqtop", "operator": "equal", "operand": "*COQTOP*"
-            }
-                    ]
-    },
-    {
-        "keys": ["delete"],
-        "command": "coq_delete",
-        "context":  [
-            {
-                "key": "running_coqtop", "operator": "equal", "operand": "*COQTOP*"
-            }
-                    ]
+        ]
     }
 ]
