@@ -22,3 +22,8 @@ add this to your theme (for light backgrounds):
   </dict>
 </dict>
 ```
+
+Mac OS X
+--------
+
+On OS X, you may need to use [SublimeFixMacPath package](https://github.com/int3h/SublimeFixMacPath) if coqtop is not present in your system path.
