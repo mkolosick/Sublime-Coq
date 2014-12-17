@@ -62,8 +62,8 @@ class CoqtopSuccessCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         coqfile_view = manager.file_view
 
-        r = coqfile_view.find(r'(.|\n)*?\.', manager.current_position)
-        text = coqfile_view.substr(r)
+        r = coqfile_view.find(r'(.|\n)*?\.( |\n|$)', manager.current_position)
+        text = coqfile_view.substr(r).strip()
 
         if 'keyword.coq' in coqfile_view.scope_name(manager.current_position).split(' '):
             if text == 'Proof.':
