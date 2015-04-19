@@ -1,81 +1,103 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
-<dict>
+  <dict>
     <key>fileTypes</key>
     <array>
-        <string>v</string>
+      <string>v</string>
     </array>
     <key>name</key>
     <string>Coq</string>
     <key>patterns</key>
     <array>
+      <dict>
+        <key>include</key>
+        <string>#multilinecomment</string>
+      </dict>
+      <dict>
+        <key>beginCaptures</key>
         <dict>
-            <key>beginCaptures</key>
-            <dict>
-                <key>1</key>
-                <dict>
-                    <key>name</key>
-                    <string>keyword.coq</string>
-                </dict>
-            </dict>
-            <key>begin</key>
-            <string>\b(Proof)\.</string>
-            <key>endCaptures</key>
-            <dict>
-                <key>1</key>
-                <dict>
-                    <key>name</key>
-                    <string>keyword.coq</string>
-                </dict>
-            </dict>
-            <key>end</key>
-            <string>\b(Qed)\.</string>
+          <key>1</key>
+          <dict>
             <key>name</key>
-            <string>proof.coq</string>
+            <string>keyword.coq</string>
+          </dict>
         </dict>
+        <key>begin</key>
+        <string>\b(Proof)\.</string>
+        <key>endCaptures</key>
         <dict>
-            <key>captures</key>
-            <dict>
-                <key>1</key>
-                <dict>
-                    <key>name</key>
-                    <string>variable.coq</string>
-                </dict>
-            </dict>
-            <key>match</key>
-            <string>\b(Axiom|Conjecture|Parameter|Parameters|Variable|Variables|Hypothesis|Hypotheses|Definition|Let|Fixpoint|CoFixpoint|Inductive|CoInductive|Remark|Fact|Corollary|Proposition|Example|Module|Theorem|Lemma)\b</string>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.coq</string>
+          </dict>
         </dict>
+        <key>end</key>
+        <string>\b(Qed)\.</string>
+        <key>name</key>
+        <string>proof.coq</string>
+      </dict>
+      <dict>
+        <key>captures</key>
         <dict>
-            <key>captures</key>
-            <dict>
-                <key>1</key>
-                <dict>
-                    <key>name</key>
-                    <string>keyword.coq</string>
-                </dict>
-            </dict>
-            <key>match</key>
-            <string>\b(Require|Proof|Qed|Type|Admitted|match|with|end|Eval|in|Check|End|Notation|forall|as|Defined|Set|fun|at|cofix|else|exists|exists2|fix|for|if|IF|let|mod|Prop|return|then|using|where|Abort)\b</string>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>variable.coq</string>
+          </dict>
         </dict>
+        <key>match</key>
+        <string>\b(Axiom|Conjecture|Parameter|Parameters|Variable|Variables|Hypothesis|Hypotheses|Definition|Let|Fixpoint|CoFixpoint|Inductive|CoInductive|Remark|Fact|Corollary|Proposition|Example|Module|Theorem|Lemma)\b</string>
+      </dict>
+      <dict>
+        <key>captures</key>
         <dict>
-            <key>begin</key>
-            <string>\(\*</string>
-            <key>end</key>
-            <string>\*\)</string>
+          <key>1</key>
+          <dict>
+            <key>name</key>
+            <string>keyword.coq</string>
+          </dict>
+        </dict>
+        <key>match</key>
+        <string>\b(Require|Proof|Qed|Type|Admitted|match|with|end|Eval|in|Check|End|Notation|forall|as|Defined|Set|fun|at|cofix|else|exists|exists2|fix|for|if|IF|let|mod|Prop|return|then|using|where|Abort)\b</string>
+      </dict>
+      <dict>
+        <key>match</key>
+        <string>:.*?[,.]</string>
+        <key>name</key>
+        <string>type.coq</string>
+      </dict>
+    </array>
+
+    <key>repository</key>
+    <dict>
+      <key>multilinecomment</key>
+      <dict>
+        <key>begin</key>
+        <string>\(\*</string>
+        <key>name</key>
+        <string>comment.coq</string>
+        <key>end</key>
+        <string>\*\)</string>
+        <key>contentName</key>
+        <string>comment.coq</string>
+        <key>patterns</key>
+        <array>
+          <dict>
+            <key>include</key>
+            <string>#multilinecomment</string>
             <key>name</key>
             <string>comment.coq</string>
-        </dict>
-        <dict>
-            <key>match</key>
-            <string>:.*?[,.]</string>
-            <key>name</key>
-            <string>type.coq</string>
-        </dict>
-    </array>
+          </dict>
+        </array>
+      </dict>
+    </dict>
+
+
     <key>scopeName</key>
     <string>source.coq</string>
     <key>uuid</key>
     <string>f3924813-f5ba-4ccf-b76f-f9bff62c5180</string>
-</dict>
+  </dict>
 </plist>
