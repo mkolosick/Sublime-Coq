@@ -48,7 +48,7 @@
           </dict>
         </dict>
         <key>match</key>
-        <string>\b(Axiom|Conjecture|Parameter|Parameters|Variable|Variables|Hypothesis|Hypotheses|Definition|Let|Fixpoint|CoFixpoint|Inductive|CoInductive|Remark|Fact|Corollary|Proposition|Example|Module|Theorem|Lemma|Class|Instance)\b</string>
+        <string>\b(Axiom|Conjecture|Parameter|Parameters|Variable|Variables|Hypothesis|Hypotheses|Definition|Let|Fixpoint|CoFixpoint|Inductive|CoInductive|Remark|Fact|Corollary|Proposition|Example|Module|Theorem|Lemma|Class|Instance|Context)\b</string>
       </dict>
       <dict>
         <key>captures</key>
